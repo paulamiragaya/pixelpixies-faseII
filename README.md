@@ -52,7 +52,7 @@ El sistema ya incluye varios usuarios listos para testear todas las funcionalida
 | Hotelero    | `hotelero1`   | `123456789`   |
 |             | `hotelero2`   | `123456789`   |
 |             | `hotelero3`   | `123456789`   |
-| Servicio IA | `servicio1`   | `123456789`   |
+| Servicio    | `servicio1`   | `123456789`   |
 
 Puedes usar estos usuarios directamente al iniciar sesión en la web.
 
