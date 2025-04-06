@@ -10,10 +10,8 @@ Proyecto web desarrollado en Django con microservicios basados en FastAPI para a
 - 🐍 **Django** — Backend principal
 - ⚡ **FastAPI** — Microservicios (sentimientos & recomendación)
 - 🐳 **Docker & Docker Compose** — Contenedores
-- 🧠 **GenAI + Asistente de voz** — IA generativa de imagen (FLUX-schnell) + Speech to text model (Whisper) + LLM 
+- 🧠 **GenAI + Asistente de voz** — IA generativa de imagen (FLUX-schnell) + Speech to text (Whisper) + LLM 
 - 📦 **Git LFS** — Archivos grandes (.pkl, .sqlite3, imágenes)
-
----
 
 ---
 
@@ -23,7 +21,8 @@ Proyecto web desarrollado en Django con microservicios basados en FastAPI para a
 
 ### ✅ Opción rápida (recomendada)
 
-Las imágenes de todos los servicios ya están disponibles en **Docker Hub**, así que con un solo comando podés levantar todo el sistema:
+Las imágenes de todos los servicios ya están disponibles en **Docker Hub**, así que con un solo comando puedes levantar todo el sistema:
+Tan solo necesitarías descargar el archivo docker-compose.yaml del repositorio y realizar lo siguiente:
 
 ```bash
 docker compose up
@@ -53,27 +52,23 @@ El sistema ya incluye varios usuarios listos para testear todas las funcionalida
 |             | `hotelero3`   | `123456789`   |
 | Servicio IA | `servicio1`   | `123456789`   |
 
-Podés usar estos usuarios directamente al iniciar sesión en la web.
+Puedes usar estos usuarios directamente al iniciar sesión en la web.
 
 ---
 
 ### 🛠️ Opción avanzada: construir las imágenes tú mismo
 
-Si querés construir las imágenes localmente, hacé lo siguiente:
+Si quieres construir las imágenes localmente, haz lo siguiente:
 
-1. **Editá el `docker-compose.yaml`** y:
-   - ❌ Comentá las líneas que dicen `image:`
-   - ✅ Descomentá las líneas que dicen `build:`
+1. **Edita el `docker-compose.yaml`** y:
+   - ❌ Comenta las líneas que dicen `image:`
+   - ✅ Descomenta las líneas que dicen `build:`
 
-2. Asegurate de tener creado un archivo `.env` basado en `.env.example`:
+2. Asegurate de tener creado un archivo `.env`:
 
-```bash
-cp .env.example .env
-```
+Y complétalo con tus claves necesarias (por ejemplo, `REPLICATE_API_TOKEN`, utilizada porque IA generativa de imagen consume demasiada memoria RAM de GPU).
 
-Y completalo con tus claves necesarias (por ejemplo, `REPLICATE_API_TOKEN`, utilizada porque IA generativa de imagen consume demasiada memoria RAM de GPU).
-
-3. Luego ejecutá:
+3. Luego ejecuta:
 
 ```bash
 docker compose up --build
@@ -82,10 +77,10 @@ docker compose up --build
 
 ### ❓ ¿Problemas ejecutando?
 
-Si tenés dificultades para ejecutar el sistema, podés consultar directamente a:
+Si tienes dificultades para ejecutar el sistema, puedes consultar directamente a:
 
 📩 **pixelpixies@gmail.com**
 
-¡Estaremos encantados de ayudarte!
+¡Estaremos encantadas de ayudarte!
 
 ---
