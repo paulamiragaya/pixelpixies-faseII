@@ -69,6 +69,7 @@ Clona el repositorio:
 ```bash
 git clone https://github.com/paulamirgaya/pixelpixies-faseII.git
 cd pixelpixies-faseII
+```
 
 1. **Edita el `docker-compose.yaml`** y:
    - ❌ Comenta las líneas que dicen `image:`
