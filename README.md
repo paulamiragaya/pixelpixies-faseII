@@ -90,7 +90,7 @@ docker compose up --build
 
 Si tienes dificultades para ejecutar el sistema, puedes consultar directamente a:
 
-📩 **pixelpixies@gmail.com**
+📩 **pixelpixies24@gmail.com**
 
 ¡Estaremos encantadas de ayudarte!
 
