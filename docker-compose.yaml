@@ -2,6 +2,7 @@ services:
   django:
     # build: ./GreenLakeWeb
     image: paulamiragaya/greenlake-django:latest
+    # platform: linux/amd64 # if you run it in MAC (M1/M2/M3)
     ports:
       - "8000:8000"
     depends_on:
@@ -15,6 +16,7 @@ services:
   snt-kwv1:
     # build: ./app-snt-kwv1
     image: paulamiragaya/snt-kwv1:latest
+    # platform: linux/amd64 # if you run it in MAC (M1/M2/M3)
     ports:
       - "8001:8000"
     # volumes:
@@ -23,6 +25,7 @@ services:
   ir-srv2:
     # build: ./app-ir-srv2
     image: paulamiragaya/ir-srv2:latest
+    # platform: linux/amd64 # if you run it in MAC (M1/M2/M3)
     ports:
       - "8002:8000"
     # volumes:
