@@ -30,6 +30,8 @@ Guárdalo en una carpeta vacía y luego ejecuta:
 ```bash
 docker compose up
 
+---
+
 Eso te arrancará:
 
 | Servicio       | URL                    | Descripción                          |
