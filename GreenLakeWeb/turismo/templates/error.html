@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="container-verification">
+    <div class="container-box">
+        <h1 class="title">⚠️ Acceso no autorizado</h1>
+        <p class="subtitle">{{ mensaje }}</p>
+        <a href="{% url 'home' %}" class="btn btn-blue">⬅ Volver a la página principal</a>
+    </div>
+</div>
+<style>
+    .container-verification {
+        width: 80%;
+        margin: 0 auto;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .container-box {
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}

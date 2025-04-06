@@ -1,0 +1,6 @@
+*.sqlite3
+*.pkl
+*.mp4
+*.png 
+.gitattributes
+*.env

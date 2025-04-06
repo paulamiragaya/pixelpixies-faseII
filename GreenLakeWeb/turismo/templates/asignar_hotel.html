@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="register-container">
+    <div class="register-box">
+        <h2 class="title">🏨 Asignar Hotel</h2>
+
+        <form method="POST" action="{% url 'asignar_hotel' %}">
+            {% csrf_token %}
+
+            <label class="form-label">Selecciona tu hotel:</label>
+
+            <input type="text" id="hotelSearch" class="input-field" placeholder="Filtrar por nombre..." oninput="filtrarHoteles()">
+
+            <button type="button" id="dropdownBtn" class="btn btn-blue" onclick="toggleDropdown()">
+                Selecciona un hotel ▼
+            </button>
+
+            <div id="hotelDropdown" class="hotel-dropdown">
+                {% for hotel in hoteles %}
+                    <div class="hotel-item" onclick="selectHotel('{{ hotel.id }}', '{{ hotel.nombre }}')" data-nombre="{{ hotel.nombre|lower }}">
+                        {{ hotel.nombre }}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <input type="hidden" name="hotel_id" id="hotel_id">
+
+            <button type="submit" class="btn btn-green">✅ Asignar Hotel</button>
+        </form>
+
+        <div class="main-content">
+            <a href="{% url 'cambiar_rol' %}" class="btn btn-warning">❌ No soy hotelero</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function normalize(text) {
+        return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    }
+
+    function toggleDropdown() {
+        document.getElementById("hotelDropdown").classList.toggle("show");
+        eliminarDuplicados();
+    }
+
+    function selectHotel(id, nombre) {
+        document.getElementById("dropdownBtn").textContent = nombre + " ✅";
+        document.getElementById("hotel_id").value = id;
+        document.getElementById("hotelDropdown").classList.remove("show");
+    }
+
+    function filtrarHoteles() {
+        let input = normalize(document.getElementById("hotelSearch").value);
+        let hoteles = document.querySelectorAll(".hotel-item");
+
+        hoteles.forEach(hotel => {
+            let nombre = normalize(hotel.getAttribute("data-nombre"));
+            hotel.style.display = nombre.startsWith(input) ? "block" : "none";
+        });
+    }
+
+    function eliminarDuplicados() {
+        const vistos = new Set();
+        document.querySelectorAll(".hotel-item").forEach(hotel => {
+            const nombre = hotel.getAttribute("data-nombre");
+            if (vistos.has(nombre)) {
+                hotel.style.display = "none";
+            } else {
+                vistos.add(nombre);
+            }
+        });
+    }
+
+    document.addEventListener("click", function (e) {
+        const dropdown = document.getElementById("hotelDropdown");
+        const button = document.getElementById("dropdownBtn");
+        const search = document.getElementById("hotelSearch");
+        if (!dropdown.contains(e.target) && !button.contains(e.target) && e.target !== search) {
+            dropdown.classList.remove("show");
+        }
+    });
+</script>
+
+<style>
+    .main-content {
+        background: transparent;
+        padding: 20px;
+        text-align: center;
+    }
+
+    .register-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: linear-gradient(135deg, #4f77ff, #61d6a3);
+    }
+
+    .register-box {
+        background: white;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+        width: 400px;
+        text-align: center;
+    }
+
+    .btn-green {
+        margin-top: 5% ;
+    }
+
+    .btn-warning {
+        margin-top: 5%;
+        font-size: 1rem;
+        background-color: #ffcc00;
+        color: white;
+    }
+    
+    .btn-warning:hover {
+        background-color: #ae8b00;
+        color: #ffffff;
+    }
+
+    .hotel-dropdown {
+        display: none;
+        position: absolute;
+        width: 100%;
+        max-height: 200px;
+        overflow-y: auto;
+        background: white;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        z-index: 10;
+    }
+
+    .hotel-dropdown.show {
+        text-align: left;
+        width: 30%;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        display: block;
+    }
+
+    .hotel-item {
+        padding: 12px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+        border-bottom: 1px solid #eee;
+    }
+
+    .hotel-item:hover {
+        background-color: #f0f0f0;
+    }
+</style> 
+{% endblock %}

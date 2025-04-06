@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="admin-container">
+    <h1 class="admin-title">Mis reservas</h1>
+
+    <input type="text" id="searchInput" class="input-field" placeholder="Filtrar por nombre..." oninput="filterByName()">
+    <div class="admin-table-container">
+        <table class="admin-table" id="reservasTable">
+            <thead>
+                <tr>
+                    <th onclick="sortTable(0)">Nombre ⬍</th>
+                    <th onclick="sortTable(1)">Fecha ⬍</th>
+                    <th onclick="sortTable(2)">Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in reservas %}
+                <tr>
+                    <td>{{ r.hotel.nombre }}</td>
+                    <td>{{ r.fecha_reserva }}</td>
+                    <td>{{ r.estado }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function filterByName() {
+        const input = document.getElementById("searchInput").value.toLowerCase();
+        const rows = document.querySelectorAll("#reservasTable tbody tr");
+    
+        rows.forEach(row => {
+            const name = row.cells[0].innerText.toLowerCase();
+            row.style.display = name.includes(input) ? "" : "none";
+        });
+    }
+
+    function sortTable(colIndex) {
+        const table = document.getElementById("reservasTable");
+        const rowsArray = Array.from(table.rows).slice(1); 
+        let asc = table.getAttribute("data-sort-dir") !== "asc";
+    
+        rowsArray.sort((a, b) => {
+            let valA = a.cells[colIndex].innerText.trim();
+            let valB = b.cells[colIndex].innerText.trim();
+    
+            if (colIndex === 1) {
+                valA = new Date(valA);
+                valB = new Date(valB);
+            }
+    
+            return asc ? valA > valB ? 1 : -1 : valA < valB ? 1 : -1;
+        });
+    
+        const tbody = table.querySelector("tbody");
+        rowsArray.forEach(row => tbody.appendChild(row));
+        table.setAttribute("data-sort-dir", asc ? "asc" : "desc");
+    }
+</script>
+
+<style>
+    .input-field {
+        width: 50%;
+        margin: 15px 0;
+        padding: 8px;
+    }
+
+    .admin-table-container {
+        max-width: 95%;
+        overflow-x: hidden;
+        background: white;
+        padding: 20px;
+        margin: 20px auto 30px auto;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .admin-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+</style>
+{% endblock %}

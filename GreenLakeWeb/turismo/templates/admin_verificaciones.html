@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="admin-container">
+    <h1 class="admin-title">Verificaciones Pendientes</h1>
+
+    <div class="admin-table-container">
+        <input type="text" id="searchInput" onkeyup="filtrarVerificaciones()" 
+               placeholder="🔍 Buscar hotel o servicio..." class="input-field">
+    </div>
+
+    <div class="admin-table-container">
+        <h2 class="text">🏨 Hoteles</h2>
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Hotel</th><th>Usuario</th><th>Email</th><th>Fecha</th><th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for usuario in hoteles_existentes %}
+                <tr class="verificacion-row">
+                    <td>{{ usuario.hotel_asignado.nombre }}</td>
+                    <td>{{ usuario.username }}</td>
+                    <td>{{ usuario.email }}</td>
+                    <td>{{ usuario.date_joined|date:"Y-m-d" }}</td>
+                    <td class="actions">
+                        <a href="{% url 'aprobar_asignacion' usuario.hotel_asignado.id 'hotel' %}" class="btn btn-darkgreen">✔ Aprobar</a>
+                        <a href="{% url 'rechazar_asignacion' usuario.hotel_asignado.id 'hotel' %}" class="btn btn-danger">✘ Rechazar</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="5" class="text">No hay hoteles reclamados pendientes.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="admin-table-container">
+        <h2 class="text">🏢 Servicios </h2>
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Servicio</th><th>Usuario</th><th>Email</th><th>Fecha</th><th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for usuario in servicios_pendientes %}
+                <tr class="verificacion-row">
+                    <td>{{ usuario.servicio_asignado.nombre }}</td>
+                    <td>{{ usuario.username }}</td>
+                    <td>{{ usuario.email }}</td>
+                    <td>{{ usuario.date_joined|date:"Y-m-d"  }}</td>
+                    <td class="actions">
+                        <a href="{% url 'aprobar_asignacion' usuario.servicio_asignado.id 'servicio' %}" class="btn btn-darkgreen">✔ Aprobar</a>
+                        <a href="{% url 'rechazar_asignacion' usuario.servicio_asignado.id 'servicio' %}" class="btn btn-danger">✘ Rechazar</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="5" class="text">No hay servicios pendientes de aprobación.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function filtrarVerificaciones() {
+        var input = document.getElementById("searchInput").value.toLowerCase();
+        var rows = document.getElementsByClassName("verificacion-row");
+
+        for (var i = 0; i < rows.length; i++) {
+            rows[i].style.display = rows[i].innerText.toLowerCase().includes(input) ? "" : "none";
+        }
+    }
+</script>
+
+<style>
+    .admin-table-container {
+        max-width: 95%;
+        overflow-x: hidden;
+        background: white;
+        padding: 20px;
+        margin: 20px auto 30px auto;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .admin-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .btn-danger {
+        background-color: #ff4d4d;
+        color: white;
+    }
+    
+    .btn-danger:hover {
+        background-color: #cc0000;
+    }
+
+    .btn-darkgreen {
+        background-color: #33b64d;
+        color: white;
+    }
+
+    .btn-darkgreen:hover {
+        background-color: #237d35;
+    }
+
+    
+</style>
+{% endblock %}

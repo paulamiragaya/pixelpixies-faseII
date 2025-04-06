@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="recommend-container">
+  <h2 class="recommend-title">✨ Tu recomendación personalizada</h2>
+  <p class="recommend-text">Según tus respuestas, perteneces al <strong>Cluster {{ cluster }}</strong>.</p>
+
+
+  <div id="recommend-container">
+    {% for categoria, rutas in recomendaciones.items %}
+      <h2 class="categoria-titulo">{{ categoria }}</h2>
+
+      {% for ruta, detalles in rutas.items %}
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">📍 {{ ruta }}</h3>
+              <span class="tag">Tipo: {{ detalles.tipo_ruta }}</span>
+            </div>
+            <button class="btn-toggle" onclick="toggleDisplay('{{ ruta|slugify }}')">Ver detalles</button>
+          </div>
+          <div id="{{ ruta|slugify }}" class="card-body hidden">
+            <div class="columns">
+              <div class="column">
+                <h4>🚗 Transportes</h4>
+                {% for transporte in detalles.transportes_combinados %}
+                  <details>
+                    <summary>{{ transporte.tipo }}</summary>
+                    <ul>
+                      <li><strong>Ida:</strong></li>
+                      {% for t in transporte.ida %}
+                        <li>{{ t.ruta_popular }} - {{ t.tiempo_viaje_promedio_min|floatformat:1 }} min</li>
+                      {% endfor %}
+                      <li><strong>Vuelta:</strong></li>
+                      {% for t in transporte.vuelta %}
+                        <li>{{ t.ruta_popular }} - {{ t.tiempo_viaje_promedio_min|floatformat:1 }} min</li>
+                      {% endfor %}
+                    </ul>
+                  </details>
+                {% endfor %}
+              </div>
+              <div class="column">
+                <h4>🏨 Hoteles</h4>
+                {% if detalles.no_hay_hoteles %}
+                  <li>No hay hoteles sostenibles para esta ruta!</li>
+                
+                {% else %}
+                  {% for lugar, hoteles in detalles.hoteles_recomendados.items %}
+                    <div class="hotel-bloque">
+                        <ul>
+                          <strong>{{ lugar }}:</strong>
+                          {% for hotel in hoteles %}
+                            <li>{{ hotel.hotel_nombre }} - {{ hotel.precio_promedio_noche|floatformat:0 }}€ / Sostenibilidad: {{ hotel.puntuacion_sostenibilidad|floatformat:1 }}</li>
+                          {% endfor %}
+                        </ul>
+                    </div>
+                  {% endfor %}
+                {% endif %}
+                <h4>Otras opciones de hoteles</h4>
+                {% for lugar, hoteles in detalles.otros_hoteles.items %}
+                  <div class="hotel-bloque">
+                    <strong>{{ lugar }}:</strong>
+                    <ul>
+                      {% if hoteles %}
+                        {% for hotel in hoteles %}
+                          <li>{{ hotel.hotel_nombre }} - {{ hotel.precio_promedio_noche|floatformat:0 }}€ / Sostenibilidad: {{ hotel.puntuacion_sostenibilidad|floatformat:1 }}</li>
+                        {% endfor %}
+                      {% else %}
+                        <li>No hemos encontrado opciones adicionales para esta ruta.</li>
+                      {% endif %}
+                    </ul>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    {% endfor %}
+  </div>
+  <a href="{% url 'recomendacion_encuesta' %}?reiniciar=true" class="btn btn-blue"> Reiniciar la encuesta</a>
+</div>
+  
+<script>
+    function toggleDisplay(id) {
+        const el = document.getElementById(id);
+        el.classList.toggle("hidden");
+    }
+</script>
+
+<style>
+    .recommend-container {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 20px;
+        background: #ffffff;
+        border-radius: 14px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+
+    .recommend-title {
+        text-align: center;
+        color: #2c3e50;
+        font-size: 28px;
+        margin-bottom: 10px;
+    }
+
+    .recommend-text {
+        text-align: center;
+        font-size: 16px;
+        margin-bottom: 25px;
+        color: #555;
+    }
+
+    .categoria-titulo {
+        margin-top: 30px;
+        font-size: 20px;
+        color: #366256;
+        border-bottom: 2px solid #26eec0;
+    }
+
+    .card {
+        background: #fefefe;
+        border-radius: 12px;
+        padding: 20px;
+        margin: 20px 0;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .card-title {
+        margin: 0;
+        font-size: 18px;
+        color: #1c3d5a;
+    }
+
+    .tag {
+        font-size: 12px;
+        background: #d9f7ef;
+        padding: 4px 10px;
+        border-radius: 6px;
+        color: #1d8566;
+        margin-top: 5px;
+        display: inline-block;
+    }
+
+    .btn-toggle {
+        background: #26eec0;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 6px 12px;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    .btn-toggle:hover {
+        background: #1dd2ac;
+    }
+
+    .card-body {
+        margin-top: 15px;
+    }
+
+    .columns {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .column {
+        flex: 1;
+        min-width: 280px;
+    }
+
+    ul {
+        padding-left: 20px;
+    }
+
+    .hotel-bloque {
+        margin-bottom: 15px;
+    }
+
+    .alt {
+        color: #999;
+        font-style: italic;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    .btn-blue {
+        background-color: #ff001189;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 20px auto;
+    }
+
+    .btn-blue:hover {
+        background-color: #ff0011;
+    }
+</style>
+{% endblock %}

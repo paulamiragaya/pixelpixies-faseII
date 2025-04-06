@@ -1,0 +1,259 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="hero">
+    <div class="hero-content">
+        <h1 class="hero-title">We are</h1>
+        <h2 class="hero-subtitle">GreenLake</h2>
+        <p class="hero-text"> <italic>you should too.</italic></p>
+        <a href="{% url 'registro' %}" class="join-btn">Join Us</a>
+    </div>
+</div>
+
+<div class="main-content">
+    <h2 class="main-title">Explora  <span class="highlight">GreenLake</span></h2>
+    <p class="main-text">
+        En <strong>GreenLake</strong> cuidamos de nuestra tierra porque creemos en un turismo sostenible y responsable.  
+        Sumérgete en la naturaleza, la cultura y la tranquilidad de este destino único.
+    </p>
+
+    <div class="video-section">
+        <video autoplay muted loop class="explore-video">
+            <source src="{% static 'videos/admin_intro.mp4' %}" type="video/mp4">
+            Tu navegador no soporta la reproducción de video.
+        </video>
+    </div>
+
+    <div class="reviews-section">
+        <h2 class="reviews-title">Reseñas de nuestros visitantes</h2>
+
+        <div class="reviews-carousel">
+            <button class="prev-btn">❮</button>
+
+            <div class="reviews-wrapper">
+                <div class="reviews-container">
+                    {% for reseña in reseñas %}
+                    <div class="review">
+                        <p>"{{ reseña.comentario }}"</p>
+                        <span class="review-author">Anónimo - {{ reseña.fecha|date:"d M Y" }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <button class="next-btn">❯</button>
+        </div>
+    </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const heroContent = document.querySelector(".hero-content");
+        const heroText = document.querySelector(".hero-text");
+        const imageContainer = document.querySelector(".image-container");
+        const navbar = document.querySelector(".navbar");
+        const joinBtn = document.querySelector(".join-btn");
+    
+        let moved = false; 
+    
+        window.addEventListener("scroll", function() {
+            let scrollY = window.scrollY;
+            let maxScroll = window.innerHeight / 1.5;
+            
+            let textOpacity = Math.min(scrollY / (maxScroll / 2), 1);
+            heroText.style.opacity = textOpacity;
+            joinBtn.style.opacity = textOpacity;
+            heroText.style.transform = `translateY(${Math.max(50 - scrollY / 10, 0)}px)`;
+            joinBtn.style.transform = `translateY(${Math.max(50 - scrollY / 10, 0)}px)`;
+            
+            if (scrollY > maxScroll / 1.2) {
+                navbar.classList.add("scrolled");
+                imageContainer.classList.add("scrolled");
+            } else {
+                navbar.classList.remove("scrolled"); 
+                imageContainer.classList.remove("scrolled");
+
+            }
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const container = document.querySelector(".reviews-container");
+        const reviews = Array.from(container.children); 
+        const prevBtn = document.querySelector(".prev-btn");
+        const nextBtn = document.querySelector(".next-btn");
+
+        const visibleReviews = 4; 
+        let index = 0;
+
+        reviews.slice(0, visibleReviews).forEach(review => {
+            let clone = review.cloneNode(true);
+            container.appendChild(clone);
+        });
+
+        function updateCarousel() {
+            const reviewWidth = reviews[0].offsetWidth + 20; 
+            container.style.transition = "transform 0.5s ease-in-out";
+            container.style.transform = `translateX(${-index * reviewWidth}px)`;
+
+            if (index >= reviews.length) {
+                setTimeout(() => {
+                    container.style.transition = "none"; 
+                    index = 0; 
+                    container.style.transform = `translateX(${-index * reviewWidth}px)`;
+                }, 500);
+            }
+        }
+
+        nextBtn.addEventListener("click", function() {
+            index++;
+            updateCarousel();
+        });
+
+        prevBtn.addEventListener("click", function() {
+            if (index === 0) {
+                container.style.transition = "none";
+                index = reviews.length - visibleReviews; 
+                container.style.transform = `translateX(${-index * (reviews[0].offsetWidth + 20)}px)`;
+                setTimeout(() => {
+                    container.style.transition = "transform 0.5s ease-in-out";
+                    index--;
+                    updateCarousel();
+                }, 50);
+            } else {
+                index--;
+                updateCarousel();
+            }
+        });
+
+        updateCarousel(); 
+    });
+</script>
+
+<style> 
+    .main-content {
+        background: transparent;
+        padding: 100px 20px;
+        text-align: center;
+    }
+
+    .main-title {
+        font-size: 3rem;
+        font-weight: bold;
+        color: white;
+        margin-bottom: 20px;
+    }
+
+    .main-text {
+        font-size: 1.2rem;
+        color: white;
+        max-width: 800px;
+        margin: 0 auto 40px auto;
+        text-align:center;
+        line-height: 1.6;
+    }
+
+    .highlight {
+        color: #26eec0; 
+    }
+
+    .video-section {
+        width: 100%;
+        height: 400px;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: black; 
+    }
+
+    .explore-video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; 
+    }
+
+    .reviews-section {
+        text-align: center;
+        padding: 60px 20px;
+        background: transparent;
+    }
+
+    .reviews-title {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: white;
+        margin-bottom: 30px;
+    }
+
+    .reviews-carousel {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        max-width: 80%; 
+        margin: auto;
+
+    }
+
+    .reviews-wrapper {
+        overflow: hidden;
+        width: 100%;
+    }
+
+    .reviews-container {
+        display: flex;
+        gap: 20px;
+        transition: transform 0.5s ease-in-out;
+    }
+
+    .review {
+        flex: 0 0 70%; 
+        max-width: 200px; 
+        max-height: 200px; 
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.6);
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition:  transform 0.5s ease;
+    }
+
+    .review-author {
+        display: block;
+        margin-top: 10px;
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .prev-btn, .next-btn {
+        background: none;
+        border: none;
+        font-size: 2rem;
+        cursor: pointer;
+        color: #26eec0;
+        transition: color 0.3s ease;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: transparent;
+        padding: 10px 15px;
+        border-radius: 50%;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .prev-btn {
+        left: -50px;
+    }
+
+    .next-btn {
+        right: -50px;
+    }
+
+    .prev-btn:hover, .next-btn:hover {
+        color: #ffffff;
+        background: #26eec0;
+    }
+
+</style>        
+{% endblock %}

@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container-verification">
+    <div class="container-box">
+        <h1 class="title">🚀 Impulsa tus Imágenes con IA Generativa</h1>
+        <p class="subtitle">Genera imágenes promocionales únicas con inteligencia artificial para atraer más clientes.</p>
+        
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="generate-btn">Generar Imágenes</button>
+        </form>
+
+        <div class="image-row">
+            {% if images %}
+                {% for image in images %}
+                    <div class="image-box">
+                        <img src="{{ MEDIA_URL }}{{ image.image }}" alt="Imagen de marketing">
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No hay imagen disponible.</p>
+            {% endif %}
+        </div>
+
+        {% if error %}
+            <div class="error-visual">
+                <h2 class="error-icon">😓</h2>
+                <h1 class="admin-title">¡Oops! Servicio no disponible</h1>
+                <p class="error-text">Estamos realizando tareas de mantenimiento<br> o el servicio de IA está inactivo temporalmente.</p>
+                <a href="{% url 'marketing_view' hotel.id %}" class="btn btn-green">🔄 Reintentar</a>
+            </div>
+        {% else %}
+            <div class="chart-container">
+                {{ plot_div|safe }}
+            </div>
+        {% endif %}
+        
+    </div>
+</div>
+
+<style>
+    .error-visual {
+        margin: 20px 80px auto auto;
+        padding: 60px 30px;
+        background: rgba(0, 0, 0, 0.8); 
+        backdrop-filter: blur(8px);
+        border-radius: 16px;
+        text-align: center;
+        color: #fff;
+        animation: fadeIn 0.8s ease-in-out;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5); 
+        z-index: 10000;
+    }
+
+    .error-icon {
+        font-size: 4rem;
+        margin-bottom: 20px;
+    }
+
+    .error-text {
+        font-size: 1.3rem;
+        margin-bottom: 30px;
+        color: #f5f5f5; 
+        line-height: 1.6;
+    }
+
+    .chart-container {
+        margin-top: 20px;
+        padding: 20px;
+        background: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .container-verification {
+        width: 80%;
+        margin: 0 auto;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .container-box {
+        background: #ffffff;
+        text-align: center;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+
+    .generate-btn {
+        padding: 12px 25px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 18px;
+        transition: background 0.3s ease-in-out;
+        margin-bottom: 30px;
+    }
+
+    .generate-btn:hover {
+        background-color: #218838;
+    }
+
+    .image-row {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .image-box img {
+        width: 100%;
+        max-width: 300px;
+        height: auto;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .image-box img:hover {
+        transform: scale(1.05);
+    }
+
+</style>
+{% endblock %}

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenLake Tourism</title>
+</head>
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'turismo/css/styles_copy.css' %}">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+<body>
+
+    <nav class="navbar">
+        <div class="container navbar-container">
+            <div class="navbar-left">
+                <a href="/" class="navbar-logo">GreenLake</a>
+                <div class="navbar-menu">
+                    <a href="/hoteles/" class="navbar-link">Hoteles</a>
+                    <a href="/rutas/" class="navbar-link">Rutas</a>
+                    <a href="/opiniones/" class="navbar-link">Opiniones</a>
+                </div>
+            </div>
+
+            <div class="navbar-right">
+                {% if user.is_authenticated %}
+                <div class="relative">
+                    <button id="menuButton" class="menu-button">
+                        Bienvenido, {{ user.username }} ▼
+                    </button>
+                    <div id="userMenu" class="menu-dropdown hidden">
+                        {% if user.is_superuser %}
+                            <a href="{% url 'verificaciones' %}" class="menu-item">🛠 Gestionar Verificaciones</a>
+                            <a href="{% url 'gestionar_usuarios' %}" class="menu-item">🛠 Gestionar Usuarios</a>
+                            <a href="{% url 'vista_clusters' %}" class="menu-item">📊 Visualizar Clústeres</a>
+                        {% endif %}
+
+                        {% if user.tipo_usuario == "Turista" and not user.is_superuser %}
+                            <a href="{% url 'recomendacion_encuesta' %}" class="menu-item">✨ Recomendaciones</a>
+                            <a href="{% url 'dashboard_turista' %}" class="menu-item">📊 Mi Dashboard</a>
+                            <a href="{% url 'reservas_turista' %}" class="menu-item">🌟 Mis Reservas</a>
+                            <a href="{% url 'perfil' %}" class="menu-item">👤 Mi Perfil</a>
+
+                        {% elif user.tipo_usuario == "Hotelero" %}
+                            {% if user.hotel_asignado and user.verificado %}
+                                <a href="{% url 'dashboard_hotelero' %}" class="menu-item">📊 Gestionar Hotel</a>
+                                <a href="{% url 'reservas_hotelero' %}" class="menu-item">🌟 Reservas</a>
+                                <a href="{% url 'leaderboard_sostenibilidad' %}" class="menu-item">🌱 GreenPoints</a>
+                                <a href="{% url 'perfil' %}" class="menu-item">👤 Mi Perfil</a>
+                            {% else %}
+                                {% if not user.hotel_asignado %}
+                                    <a href="{% url 'asignar_hotel' %}" class="menu-item">🏨 Asignar Hotel</a>
+                                {% else %}
+                                    <a href="{% url 'espera_verificacion' %}" class="menu-item">⌛ Esperando Verificación</a>
+                                {% endif %}
+                            {% endif %}
+                        {% elif user.tipo_usuario == "Empresario" %}
+                            {% if user.servicio_asignado and user.verificado %}
+                                <a href="{% url 'dashboard_servicio' %}" class="menu-item">🏢 Gestionar Servicio</a>
+                                <a href="{% url 'leaderboard_sostenibilidad'%}" class="menu-item">🌱 GreenPoints</a>
+                                <a href="{% url 'perfil' %}" class="menu-item">👤 Mi Perfil</a>
+                            {% else %}
+                                {% if not user.servicio_asignado %}
+                                    <a href="{% url 'asignar_servicio' %}" class="menu-item">🏢 Asignar Servicio</a>
+                                {% else %}
+                                    <a href="{% url 'espera_verificacion' %}" class="menu-item">⌛ Esperando Verificación</a>
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+
+                        <a href="{% url 'logout' %}" class="menu-item">❌ Cerrar Sesión</a>
+                    </div>
+                </div>
+                {% else %}
+                <div class="space-x-4">
+                    <a href="{% url 'login' %}" class="btn btn-green">Iniciar Sesión</a>
+                    <a href="{% url 'registro' %}" class="btn btn-blue">Registrarse</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="mt-16">
+        {% block content %} {% endblock %}
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const menuButton = document.getElementById("menuButton");
+            const userMenu = document.getElementById("userMenu");
+
+            if (menuButton && userMenu) {
+                menuButton.addEventListener("click", function(event) {
+                    event.stopPropagation();
+                    userMenu.classList.toggle("show");
+                });
+
+                document.addEventListener("click", function(event) {
+                    if (!menuButton.contains(event.target) && !userMenu.contains(event.target)) {
+                        userMenu.classList.remove("show");
+                    }
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>

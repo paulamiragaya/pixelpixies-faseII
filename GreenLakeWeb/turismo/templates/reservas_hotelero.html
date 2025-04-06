@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="admin-container">
+    <h1 class="admin-title">Mis reservas</h1>
+        {% if messages %}
+        <div class="custom-message-container">
+            {% for message in messages %}
+                <div class="custom-alert">
+                    {{ message }}
+                    <span class="close-btn" onclick="this.parentElement.style.display='none';">×</span>
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    <input type="text" id="searchInput" class="input-field" placeholder="Filtrar por nombre de usuario..." oninput="filterByName()">
+    <div class="admin-table-container">
+        <table class="admin-table" id="reservasTable">
+            <thead>
+                <tr>
+                    <th onclick="sortTable(0)">Usuario  ⬍</th>
+                    <th onclick="sortTable(1)">Fecha ⬍</th>
+                    <th onclick="sortTable(2)">Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in reservas %}
+                <tr>
+                    <td>{{ r.usuario.username }}</td>
+                    <td>{{ r.fecha_reserva }}</td>
+                    <td>{{ r.estado }}</td>
+                    <td class="actions">
+                        {% if r.estado == "pendiente" %}
+                            <form method="POST" action="{% url 'confirmar_reserva' r.id %}" onsubmit="return confirmarReserva();">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-green">✔ Confirmar</button>
+                            </form>
+                            <form method="POST" action="{% url 'cancelar_reserva' r.id %}" onsubmit="return confirmarCancelacion();">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">✘ Cancelar</button>
+                            </form>
+                        {% elif r.estado == "confirmada" %}
+                            <span class="text">✔ Confirmada</span>
+                        {% elif r.estado == "cancelada" %}
+                            <span class="text">✘ Cancelada</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function filterByName() {
+        const input = document.getElementById("searchInput").value.toLowerCase();
+        const rows = document.querySelectorAll("#reservasTable tbody tr");
+    
+        rows.forEach(row => {
+            const name = row.cells[0].innerText.toLowerCase();
+            row.style.display = name.includes(input) ? "" : "none";
+        });
+    }
+    
+    function sortTable(colIndex) {
+        const table = document.getElementById("reservasTable");
+        const rowsArray = Array.from(table.rows).slice(1);
+        let asc = table.getAttribute("data-sort-dir") !== "asc";
+    
+        rowsArray.sort((a, b) => {
+            let valA = a.cells[colIndex].innerText.trim();
+            let valB = b.cells[colIndex].innerText.trim();
+
+            if (colIndex === 1) {
+                valA = new Date(valA);
+                valB = new Date(valB);
+            }
+    
+            return asc ? valA > valB ? 1 : -1 : valA < valB ? 1 : -1;
+        });
+    
+        const tbody = table.querySelector("tbody");
+        rowsArray.forEach(row => tbody.appendChild(row));
+        table.setAttribute("data-sort-dir", asc ? "asc" : "desc");
+    }
+
+    function confirmarReserva() {
+        return confirm("¿Estás seguro de que quieres confirmar esta reserva?");
+    }
+
+    function confirmarCancelacion() {
+        return confirm("¿Estás seguro de que quieres cancelar esta reserva?");
+    }
+</script>
+
+<style>
+    .input-field {
+        width: 50%;
+        margin: 15px 0;
+        padding: 8px;
+    }
+
+    .admin-table-container {
+        max-width: 95%;
+        overflow-x: hidden;
+        background: white;
+        padding: 20px;
+        margin: 20px auto 30px auto;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .admin-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .btn-danger {
+        background-color: #ff4d4d;
+        font-size: 1rem;
+        color: white;
+        margin-top: 3%;
+    }
+    
+    .btn-danger:hover {
+        background-color: #cc0000;
+    }
+
+    .custom-message-container {
+        position: fixed;
+        top: 90px;
+        right: 30px;
+        z-index: 2000;
+        width: auto;
+        max-width: 90%;
+    }
+
+    .custom-alert {
+        background-color: #26eec0;
+        color: #ffffff;
+        padding: 15px 20px;
+        margin-bottom: 15px;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        font-weight: 500;
+        position: relative;
+        transition: opacity 1s ease, transform 0.5s ease;
+        opacity: 1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 30px;
+        min-width:320px;
+    }
+
+    .custom-alert.fade-out {
+        opacity: 0;
+        transform: translateX(50%);
+        pointer-events: none;
+    }
+
+    .custom-alert .close-btn {
+        font-size: 22px;
+        font-weight: bold;
+        color: #ffffff;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+</style>
+{% endblock %}

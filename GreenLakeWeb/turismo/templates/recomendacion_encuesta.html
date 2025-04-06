@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+{% if error %}
+    <div class="error-visual">
+        <h2 class="error-icon">😓</h2>
+        <h1 class="admin-title">¡Oops! Servicio no disponible</h1>
+        <p class="error-text">Estamos realizando tareas de mantenimiento<br> o el servicio de IA está inactivo temporalmente.</p>
+        <a href="{% url 'dashboard_turista' %}" class="btn btn-green">Volver</a>
+    </div>
+{% else %}
+    <div class="recommend-container">
+        <h2 class="recommend-title">🔍 Encuesta de preferencias</h2>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div id="preguntas-container"></div>
+
+            <button type="submit" class="btn btn-green">Enviar</button>
+        </form>
+    
+    </div>
+{% endif %}
+<script>
+    const preguntasData = [
+        {
+            "step": 1,
+            "title": "¿Qué tipo de experiencias prefieres?",
+            "question": "Selecciona los tipos de rutas que más te interesan",
+            "input_type": "checkbox",
+            "options": ["Cultural", "Aventura", "Gastronómica", "Histórica", "Ecológica"]
+        },
+        {
+            "step": 2,
+            "title": "Duración ideal",
+            "question": "¿Cuánto tiempo te gustaría dedicar a las rutas?",
+            "input_type": "slider",
+            "min": 1,
+            "max": 8,
+            "unit": "horas"
+        },
+        {
+            "step": 3,
+            "title": "¿Te interesa la sostenibilidad?",
+            "question": "¿Qué importancia tiene para ti la sostenibilidad?",
+            "input_type": "radio",
+            "options": [
+                "No es importante",
+                "Poco importante",
+                "Neutral",
+                "Importante",
+                "Muy importante"
+            ]
+        },
+        {
+            "step": 4,
+            "title": "Modo de transporte",
+            "question": "¿Qué medios de transporte prefieres usar?",
+            "input_type": "checkbox",
+            "options": ["A pie", "Bicicleta", "Autobús", "Tranvía", "Taxi", "Metro", "Coche Compartido"]
+        },
+        {
+            "step": 5,
+            "title": "Tiempo de transporte",
+            "question": "¿Te gustan los viajes cortos, o prefieres disfrutar del paisaje?",
+            "input_type": "radio",
+            "options": [
+                "Tengo prisa!",
+                "Ni una ni otra, un término medio",
+                "No me importa",
+                "Me gustan los viajes largos"
+            ]
+        },
+        {
+            "step": 6,
+            "title": "Nivel de actividad",
+            "question": "¿Qué nivel de esfuerzo físico prefieres?",
+            "input_type": "radio",
+            "options": ["Bajo", "Moderado", "Alto"]
+        },
+        {
+            "step": 7,
+            "title": "¿Qué tipo de compañía tendrás?",
+            "question": "Esto nos ayuda a recomendar mejor las rutas y servicios",
+            "input_type": "radio",
+            "options": ["Viajo solo/a", "En pareja", "Con amigos", "Con familia", "Grupo organizado"]
+        },
+        {
+            "step": 8,
+            "title": "Presupuesto para alojamiento",
+            "question": "¿Cuál es tu presupuesto aproximado por noche para el hotel o alojamiento?",
+            "input_type": "slider",
+            "min": 20,
+            "max": 300,
+            "unit": "€"
+        }
+    ];
+
+    const container = document.getElementById("preguntas-container");
+
+    preguntasData.forEach(p => {
+        const div = document.createElement("div");
+        div.classList.add("pregunta");
+
+        const label = document.createElement("label");
+        label.innerHTML = `<strong>${p.step}. ${p.title}</strong><br>${p.question}`;
+        div.appendChild(label);
+        div.appendChild(document.createElement("br"));
+
+        if (p.input_type === "checkbox") {
+            p.options.forEach(opt => {
+                const input = document.createElement("input");
+                input.type = "checkbox";
+                input.name = p.step;
+                input.value = opt;
+                div.appendChild(input);
+                div.appendChild(document.createTextNode(" " + opt));
+                div.appendChild(document.createElement("br"));
+            });
+        } else if (p.input_type === "radio") {
+            p.options.forEach(opt => {
+                const input = document.createElement("input");
+                input.type = "radio";
+                input.name = p.step;
+                input.value = opt;
+                div.appendChild(input);
+                div.appendChild(document.createTextNode(" " + opt));
+                div.appendChild(document.createElement("br"));
+            });
+        } else if (p.input_type === "slider") {
+            const input = document.createElement("input");
+            input.type = "range";
+            input.name = p.step;
+            input.min = p.min;
+            input.max = p.max;
+            input.value = p.min;
+            const valueDisplay = document.createElement("span");
+            valueDisplay.textContent = ` ${input.value} ${p.unit}`;
+
+            input.addEventListener("input", () => {
+                valueDisplay.textContent = ` ${input.value} ${p.unit}`;
+            });
+            div.appendChild(input);
+            div.appendChild(valueDisplay);
+            div.appendChild(document.createTextNode(` (${p.min} - ${p.max} ${p.unit})`));
+        }
+
+        container.appendChild(div);
+    });
+</script>
+
+<style>
+    .recommend-container {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 20px;
+        background: #f9f9f9;
+        border-radius: 10px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        font-family: Arial, sans-serif;
+    }
+
+    .recommend-title {
+        text-align: center;
+        color: #2c3e50;
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    .input-field {
+        width: 100%;
+        border: 2px solid #ddd;
+        font-family: 'Poppins', sans-serif;
+        color: #366256;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        margin-bottom: 10px;
+        transition: border 0.3s ease;
+    }
+
+    .input-field:focus {
+        border-color: #4f77ff;
+        outline: none;
+    }
+
+    .btn-green {
+        background-color: #26eec0;
+        color: white;
+        padding: 10px 20px;
+        font-size: 16px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        margin-top: 15px;
+    }
+
+    .btn-green:hover {
+        background-color: #1cd2a9;
+    }
+</style>
+{% endblock %}

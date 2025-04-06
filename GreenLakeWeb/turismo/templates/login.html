@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="register-container">
+    <div class="register-box">
+        <h2 class="title">🔐 Iniciar Sesión</h2>
+        {% if error %}
+            <div class="error-box">
+                <strong>⚠️ Error:</strong> {{ error }}
+            </div>
+        {% endif %}
+        <form method="POST">
+            {% csrf_token %}
+
+            <label class="form-label">Username:</label>
+            <input type="text" name="username" class="input-field" required>
+
+            <label class="form-label">Contraseña:</label>
+            <input type="password" name="password" class="input-field" required>
+
+            <button type="submit" class="btn btn-green">Iniciar Sesión</button>
+
+            <p class="text">
+                ¿No tienes cuenta? <a href="{% url 'registro' %}" class="text">Regístrate</a>
+            </p>
+        </form>
+    </div>
+</div>
+
+<style>
+    .register-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: linear-gradient(135deg, #4f77ff, #61d6a3);
+    }
+
+    .register-box {
+        background: white;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+        width: 400px;
+        text-align: center;
+    }
+
+    .error-box {
+        background: #ffdddd;
+        color: #d8000c;
+        padding: 10px;
+        border-radius: 6px;
+        margin-bottom: 10px;
+    }
+
+    .btn-green {
+        margin-top: 5% ;
+    }
+</style>
+
+{% endblock %}

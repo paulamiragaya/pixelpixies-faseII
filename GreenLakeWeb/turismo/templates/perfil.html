@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="container-verification">
+    <div class="container-box">
+        <h2 class="main-title">Mi Perfil</h2>
+        <p><strong>Nombre:</strong> {{ usuario.username }}</p>
+        <p><strong>Email:</strong> {{ usuario.email }}</p>
+        <p><strong>Tipo de usuario:</strong> {{ usuario.tipo_usuario }}</p>
+
+        <a href="{% url 'home' %}" class="btn btn-blue">🏠 Volver al inicio</a>
+        <a href="{% url 'cambiar_rol' %}" class="btn btn-blue">🏠 Yo no soy {{usuario.tipo_usuario}}</a>
+    </div>
+
+    <div class="container-box">
+        <h2 class="subtitle">🔑 Cambiar Contraseña</h2>
+        {% if mensaje %}
+            <p class="text-green">{{ mensaje }}</p>
+        {% elif error %}
+            <p class="text-red">{{ error }}</p>
+        {% endif %}
+        <form method="POST">
+            {% csrf_token %}
+            <div class="input-group">
+                <input type="password" name="nueva_password" placeholder="Nueva contraseña" class="input-field" required>
+            </div>
+            <div class="input-group">
+                <input type="password" name="confirmar_password" placeholder="Confirmar nueva contraseña" class="input-field" required>
+            </div>
+            <button type="submit" class="btn btn-green">Actualizar Contraseña</button>
+        </form>
+    </div>
+
+    <div class="container-box">
+        <form method="POST" action="{% url 'eliminar_cuenta' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">❌ Eliminar Cuenta</button>
+        </form>
+    </div>
+</div>
+
+<style>
+    .container-verification {
+        width: 80%;
+        margin: 0 auto;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .input-group {
+        margin-bottom: 20px;
+        text-align: left;
+    }
+
+    .input-group label {
+        font-weight: 500;
+        color: #333;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .container-box {
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+
+    .btn-danger {
+        background-color: #ff4d4d;
+        color: white;
+    }
+    
+    .btn-danger:hover {
+        background-color: #cc0000;
+    }
+
+</style>
+
+{% endblock %}

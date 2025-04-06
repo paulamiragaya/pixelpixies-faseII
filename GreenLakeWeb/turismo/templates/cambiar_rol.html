@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="register-container">
+    <div class="register-box">
+        <h2 class="title">🔄 Cambiar Rol de Usuario</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <label class="form-label" for="tipo_usuario">Nuevo rol:</label>
+            <select id="tipo_usuario" name="tipo_usuario" class="input-field">
+                {% for value, label in form.tipo_usuario.field.choices %}
+                    <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-green">Actualizar Rol</button>
+        </form>
+    </div>
+</div>
+<style>
+    .register-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: linear-gradient(135deg, #4f77ff, #61d6a3);
+    }
+
+    .register-box {
+        background: white;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+        width: 400px;
+        text-align: center;
+    }
+
+    .input-field {
+        margin-bottom: 3%;
+        margin-top: 1%;
+    }
+</style>
+{% endblock %}

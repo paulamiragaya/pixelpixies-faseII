@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="greencard-outer">
+  <div class="greencard-flip">
+    <!-- Cara frontal -->
+    <div class="greencard-side greencard-front">
+      <h1 class="greencard-title">🌿 Mi GreenCard</h1>
+      <div class="greencard-info">
+        <div class="greencard-row">
+          <span class="label">Nivel actual:</span>
+          <span class="value">{{ nivel }}</span>
+        </div>
+        <div class="greencard-row">
+          <span class="label">GreenPoints acumulados:</span>
+          <span class="value">{{ total_puntos }} puntos</span>
+        </div>
+        <div class="greencard-row">
+          <span class="label">Equivalente en dinero:</span>
+          <span class="value">${{ equivalente_dinero }}</span>
+        </div>
+        <div class="greencard-row">
+          <span class="label">Ventaja activa:</span>
+          <span class="value">{{ descuento }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cara trasera -->
+    <div class="greencard-side greencard-back">
+        <div class="greencard-back-columns">
+          <!-- Izquierda: datos -->
+          <div class="greencard-user-info">
+            <h3 class="greencard-back-title">👤 Datos del usuario</h3>
+            <p><strong>Nombre:</strong> {{ request.user.first_name }}</p>
+            <p><strong>ID:</strong> {{ request.user.id }}</p>
+            <p><strong>Email:</strong> {{ request.user.email }}</p>
+          </div>
+      
+          <!-- Derecha: consejos -->
+          <div class="greencard-tips">
+            <h4>🎯 Cómo ganar más puntos</h4>
+            <ul>
+              <li>🌱 Deja opiniones sobre tus hoteles</li>
+              <li>🏨 Elige hoteles sostenibles</li>
+              <li>🚴 Usa transporte público o bici</li>
+              <li>🥾 Participa en rutas ecológicas</li>
+            </ul>
+          </div>
+        </div>
+    </div>   
+</div>
+
+<style>
+    .greencard-outer {
+      perspective: 1000px;
+      width: 100%;
+      max-width: 600px;
+      margin: 50px auto;
+    }
+    
+    .greencard-flip {
+      position: relative;
+      width: 100%;
+      height: 350px;
+      transition: transform 0.8s;
+      transform-style: preserve-3d;
+      cursor: pointer;
+    }
+    
+    .greencard-outer:hover .greencard-flip {
+      transform: rotateY(180deg);
+    }
+    
+    .greencard-side {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      background: linear-gradient(to bottom right, #e8f5e9, #c8e6c9);
+      backface-visibility: hidden;
+    }
+    
+    .greencard-front {
+      z-index: 2;
+    }
+    
+    .greencard-back {
+      transform: rotateY(180deg);
+      text-align: center;
+      background: linear-gradient(to bottom right, #d7ffd9, #a5d6a7);
+    }
+    
+    .greencard-title {
+      font-size: 2rem;
+      color: #2e7d32;
+      margin-bottom: 20px;
+    }
+    
+    .greencard-info {
+      text-align: left;
+    }
+    
+    .greencard-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #cfcfcf;
+    }
+    
+    .label {
+      font-weight: bold;
+      color: #444;
+    }
+    
+    .value {
+      color: #2e7d32;
+    }
+    
+    .greencard-back-title {
+      font-size: 1.6rem;
+      margin-bottom: 15px;
+      color: #1b5e20;
+    }
+    
+    .greencard-back ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 15px;
+    }
+    
+    .greencard-back li {
+      margin: 5px 0;
+    }
+
+    .greencard-back-columns {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 40px;
+        height: 100%;
+        padding-top: 20px;
+        }
+
+        .greencard-user-info, .greencard-tips {
+        width: 50%;
+        text-align: left;
+        }
+
+        .greencard-user-info p {
+        margin: 8px 0;
+        }
+
+        .greencard-tips ul {
+        list-style: none;
+        padding: 0;
+        margin-top: 10px;
+        }
+
+        .greencard-tips li {
+        margin-bottom: 8px;
+        font-size: 0.95rem;
+        }
+</style>
+    
+{% endblock %}

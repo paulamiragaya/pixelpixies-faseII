@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="admin-container">
+    <h1 class="admin-title">Clústeres de Usuarios</h1>
+    <p class="subtitle">Visualización interactiva de los grupos de usuarios según sus preferencias.</p>
+
+    {% if error %}
+        <div class="error-visual">
+            <h2 class="error-icon">😓</h2>
+            <h1 class="admin-title">¡Oops! Servicio no disponible</h1>
+            <p class="error-text">Estamos realizando tareas de mantenimiento<br> o el servicio de IA está inactivo temporalmente.</p>
+            <a href="{% url 'vista_clusters' %}" class="btn btn-green">🔄 Reintentar</a>
+        </div>
+    {% else %}
+        <div class="chart-container">
+            {{ plot_div|safe }}
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    .chart-container {
+        margin-top: 20px;
+        padding: 20px;
+        background: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    }
+</style>
+{% endblock %}

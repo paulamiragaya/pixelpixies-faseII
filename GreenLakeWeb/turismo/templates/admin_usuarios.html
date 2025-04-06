@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="admin-container">
+    <h1 class="admin-title">Gestión de Usuarios</h1>
+    {% if messages %}
+        <div class="custom-message-container">
+        {% for message in messages %}
+            <div class="custom-alert">
+                {{ message }}
+                <span class="close-btn" onclick="this.parentElement.style.display='none';">×</span>
+            </div>
+        {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="filter-buttons">
+        <button class="btn tipo-btn" onclick="filterUsers('todos')">Todos</button>
+        <button class="btn tipo-btn" onclick="filterUsers('Turista')">Turistas</button>
+        <button class="btn tipo-btn" onclick="filterUsers('Hotelero')">Hoteleros</button>
+        <button class="btn tipo-btn" onclick="filterUsers('Empresario')">Empresarios</button>
+    </div>
+
+    <div class="admin-table-container">
+        <table class="admin-table" id="userTable">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Tipo</th>
+                    <th id="assignmentHeader">Asignación</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for usuario in usuarios %}
+
+                <tr class="user-row" data-tipo="{{ usuario.tipo_usuario }}">
+                    <td>{{ usuario.username }}</td>
+                    <td>{{ usuario.email }}</td>
+                    <td>{{ usuario.tipo_usuario }}</td>
+                    <td class="assignment-cell">
+                        {% if usuario.tipo_usuario == "Hotelero" and usuario.hotel_asignado and usuario.verificado %}
+                            {{ usuario.hotel_asignado.nombre }}
+                        {% elif usuario.tipo_usuario == "Empresario" and usuario.servicio_asignado and usuario.verificado %}
+                            {{ usuario.servicio_asignado.nombre }}
+                        {% else %}
+                            <span class="text">Sin asignar</span>
+                        {% endif %}
+                    </td>
+                    <td class="actions">
+                        {% if usuario.tipo_usuario == "Hotelero" and usuario.hotel_asignado and usuario.verificado %}
+                            <form method="POST" action="{% url 'quitar_hotel' usuario.id %}" onsubmit="return confirmarQuitar('hotel');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-warning">⊘ Quitar Hotel</button>
+                            </form>
+                        {% elif usuario.tipo_usuario == "Empresario" and usuario.servicio_asignado and usuario.verificado %}
+                            <form method="POST" action="{% url 'quitar_servicio' usuario.id %}" onsubmit="return confirmarQuitar('servicio');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-warning">⊘ Quitar Servicio</button>
+                            </form>
+                        {% endif %}
+                        <form method="POST" action="{% url 'eliminar_usuario' usuario.id %}" onsubmit="return confirmarEliminacion();">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">✘ Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function filterUsers(tipo) {
+        const rows = document.querySelectorAll('.user-row');
+        const assignmentHeader = document.getElementById('assignmentHeader');
+        rows.forEach(row => {
+            if (tipo === 'todos' || row.getAttribute('data-tipo') === tipo) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        if (tipo === 'Hotelero') {
+            assignmentHeader.textContent = 'Hotel Asignado';
+        } else if (tipo === 'Empresario') {
+            assignmentHeader.textContent = 'Servicio Asignado';
+        } else {
+            assignmentHeader.textContent = 'Asignación';
+        }
+
+        assignmentCells.forEach(cell => {
+            cell.style.display = '';
+        });
+        
+        document.querySelectorAll(".asignacion-action").forEach(action => {
+            action.style.display = (tipo === 'Turista') ? 'none' : '';
+        });
+    }
+
+    function confirmarEliminacion() {
+        return window.confirm("🚨 ¿Estás seguro de que deseas eliminar este usuario?");
+    }
+
+    function confirmarQuitar(tipo) {
+        return window.confirm(`⚠️ ¿Seguro que deseas quitar este ${tipo} del usuario? Tendrá que volver a solicitar la verificación.`);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        filterUsers('todos');
+    });
+</script>
+
+<style>
+    .admin-table-container {
+        max-width: 95%;
+        overflow-x: hidden;
+        background: white;
+        padding: 20px;
+        margin: 20px auto 30px auto;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .admin-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .btn-danger {
+        background-color: #ff4d4d;
+        font-size: 1rem;
+        color: white;
+        margin-top: 3%;
+    }
+    
+    .btn-danger:hover {
+        background-color: #cc0000;
+    }
+
+    .custom-message-container {
+        position: fixed;
+        top: 90px;
+        right: 30px;
+        z-index: 2000;
+        width: auto;
+        max-width: 90%;
+    }
+
+    .custom-alert {
+        background-color: #26eec0;
+        color: #ffffff;
+        padding: 15px 20px;
+        margin-bottom: 15px;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        font-weight: 500;
+        position: relative;
+        transition: opacity 1s ease, transform 0.5s ease;
+        opacity: 1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 30px;
+        min-width:320px;
+    }
+
+    .custom-alert.fade-out {
+        opacity: 0;
+        transform: translateX(50%);
+        pointer-events: none;
+    }
+
+    .custom-alert .close-btn {
+        font-size: 22px;
+        font-weight: bold;
+        color: #ffffff;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+
+    .btn-warning {
+        font-size: 1rem;
+        background-color: #ffcc00;
+        color: white;
+    }
+    
+    .btn-warning:hover {
+        background-color: #ae8b00;
+        color: #ffffff;
+    }
+
+</style>
+
+{% endblock %}

@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="admin-container">
+    <h1 class="admin-title">🏨 Hoteles Disponibles</h1>
+    {% if messages %}
+        <div class="custom-message-container">
+            {% for message in messages %}
+                <div class="custom-alert">
+                    {{ message }}
+                    <span class="close-btn" onclick="this.parentElement.style.display='none';">×</span>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <input type="text" id="searchInput" class="input-field" placeholder="Filtrar por nombre..." oninput="filterByName()">
+
+    <div class="hotel-card-container">
+        {% for hotel in page_obj %}
+            <div class="hotel-card" onclick="toggleExpand(this)">
+                <div class="hotel-content">
+                    <div class="hotel-text">
+                        <h3>{{ hotel.nombre }}</h3>
+                        <p class="hotel-short">
+                           {{hotel.descripcion}} 🌱
+                        </p>
+    
+                        <div class="hotel-expanded">
+                            <p><strong>Precio medio:</strong> {{ hotel.precio_promedio|floatformat:2 }}€</p>
+                            <p><strong>Ocupación:</strong> {{ hotel.tasa_ocupacion_promedio|floatformat:2 }}%</p>
+                            <form method="post" action="{% url 'reservar_hotel' hotel.id %}" class="form-reserva" onsubmit="return confirmarReserva('{{ hotel.nombre }}');">
+                                {% csrf_token %}
+                                <button class="btn btn-green">Reservar</button>
+                            </form>
+                        </div>
+                    </div>
+                    <img src="{{ hotel.foto }}" alt="Foto ruta" class="hotel-img">
+                </div>
+            </div>
+        {% empty %}
+            <p>No hay hoteles disponibles.</p>
+        {% endfor %}
+    </div>
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; Primera</a>
+                <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+            {% endif %}
+
+            <span class="current">
+                Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">Última &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+</div>
+
+<script>
+    function toggleExpand(card) {
+        card.classList.toggle("expanded");
+    }
+
+    function filterByName() {
+        const input = document.getElementById("searchInput").value.toLowerCase();
+        const cards = document.querySelectorAll(".hotel-card");
+
+        cards.forEach(card => {
+            const nameElement = card.querySelector(".hotel-text h3");
+            const name = nameElement ? nameElement.innerText.toLowerCase() : "";
+            card.style.display = name.includes(input) ? "block" : "none";
+        });
+    }
+
+    function confirmarReserva(nombreHotel) {
+        return confirm(`¿Estás seguro de que quieres reservar en "${nombreHotel}"?`);
+    }
+</script>
+
+<style>
+    .input-field {
+        width: 50%;
+        margin: 15px 0;
+        padding: 8px;
+    }
+
+    .hotel-card-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        align-items: center;
+        margin-top: 2rem;
+    }
+
+    .hotel-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        transition: transform 0.3s ease;
+        padding: 1rem;
+        box-sizing: border-box;
+        width: 90%;
+        max-width: 800px;
+    }
+
+    .hotel-card:hover {
+        transform: scale(1.01);
+    }
+
+    .hotel-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 1rem;
+    }
+
+    .hotel-text {
+        flex: 1;
+    }
+
+    .hotel-img {
+        display: none;
+        width: 100%;
+        height: 160px;
+        object-fit: contain;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        opacity: 0;
+    }
+
+    .hotel-card.expanded .hotel-content {
+        flex-direction: row;
+        text-align: left;
+        align-items: flex-start;
+    }
+
+    .hotel-card.expanded .hotel-img {
+        display: block;
+        width: 40%;
+        height: auto;
+        margin-top: 0;
+        opacity: 1;
+    }
+
+    .hotel-expanded {
+        display: none;
+        margin-top: 1rem;
+    }
+
+    .hotel-card.expanded .hotel-expanded {
+        display: block;
+    }
+
+    .pagination {
+        margin-top: 2rem;
+        text-align: center;
+    }
+
+</style>
+{% endblock %}

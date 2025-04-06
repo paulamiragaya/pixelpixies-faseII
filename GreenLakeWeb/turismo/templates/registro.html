@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="register-container">
+    <div class="register-box">
+        <h2 class="title">📝 Registro</h2>
+        {% if error %}
+            <div class="error-box">
+                <strong>⚠️ Error:</strong> {{ error }}
+            </div>
+        {% endif %}
+        <form method="POST">
+            {% csrf_token %}
+
+            <label class="form-label">Tipo de usuario:</label>
+            <div class="button-group">
+                <button type="button" class="tipo-btn" onclick="seleccionarTipo('Turista')" id="btn-turista">
+                    🧳 Soy Turista
+                </button>
+                <button type="button" class="tipo-btn" onclick="seleccionarTipo('Empresario')" id="btn-empresario">
+                    🏢 Soy Empresario
+                </button>
+            </div>
+            <input type="hidden" name="tipo_usuario" id="tipo_usuario" value="Turista">
+            <div id="mensajeSeleccion" class="hidden mensaje-seleccion"></div>
+            <div id="opcionesEmpresario" class="hidden">
+                <label class="form-label">¿Qué tipo de empresa gestionas?</label>
+                <select name="tipo_empresa" class="input-field">
+                    <option value="hotel">🏨 Hotel</option>
+                    <option value="servicio">🏢 Servicio</option>
+                </select>
+            </div>
+
+            <label class="form-label">Username:</label>
+            <input type="text" name="username" class="input-field" required>
+
+            <label class="form-label">Email:</label>
+            <input type="email" name="email" class="input-field" required>
+
+            <label class="form-label">Contraseña:</label>
+            <input type="password" name="password1" class="input-field" required>
+            <p class="text">Debe tener al menos 8 caracteres, incluir una letra y un número.</p>
+
+            <label class="form-label">Confirmar Contraseña:</label>
+            <input type="password" name="password2" class="input-field" required>
+
+            <button type="submit" class="btn btn-green">Registrarse</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function seleccionarTipo(tipo) {
+        document.getElementById("tipo_usuario").value = tipo;
+
+        const mensaje = document.getElementById("mensajeSeleccion");
+        mensaje.classList.remove("hidden");
+        mensaje.style.display = "block";
+
+        if (tipo === "Empresario") {
+            mensaje.innerHTML = "📌 Has seleccionado: <b>Empresario</b>. Ahora elige qué tipo de empresa gestionas.";
+            document.getElementById("opcionesEmpresario").classList.remove("hidden");
+
+            actualizarTipoEmpresa();
+        } else {
+            mensaje.innerHTML = "📌 Has seleccionado: <b>Turista</b>. Puedes continuar con tu registro.";
+            document.getElementById("opcionesEmpresario").classList.add("hidden");
+            document.getElementById("tipo_usuario").value = "Turista";
+        }
+
+        document.getElementById("btn-turista").classList.toggle("active", tipo === "Turista");
+        document.getElementById("btn-empresario").classList.toggle("active", tipo === "Empresario");
+    }
+
+    function actualizarTipoEmpresa() {
+        const tipoEmpresa = document.querySelector("select[name='tipo_empresa']").value;
+        document.getElementById("tipo_usuario").value = tipoEmpresa === "hotel" ? "Hotelero" : "Empresario";
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelector("select[name='tipo_empresa']").addEventListener("change", actualizarTipoEmpresa);
+    });
+</script>
+
+<style>
+    .register-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: linear-gradient(135deg, #4f77ff, #61d6a3);
+    }
+
+    .register-box {
+        background: white;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+        width: 400px;
+        text-align: center;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    .error-box {
+        background: #ffdddd;
+        color: #d8000c;
+        padding: 10px;
+        border-radius: 6px;
+        margin-bottom: 10px;
+    }
+
+    .tipo-btn {
+        padding: 10px 20px;
+        border: 2px solid #4f77ff;
+        background: white;
+        color: #2563eb;
+        font-size: 1rem;
+        font-weight: bold;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .tipo-btn.active, 
+    .tipo-btn:hover {
+        background: #4f77ff;
+        color: white;
+    }
+
+    .btn-green {
+        margin-top: 5% ;
+    }
+
+    .mensaje-seleccion {
+        background: #e7f9ed;
+        color: #065f46;
+        padding: 10px;
+        border-radius: 8px;
+        margin-top: 20px;
+        margin-bottom: 20px; 
+        font-size: 14px;
+        display: none;
+    }
+
+    .hidden {
+        display: none;
+    }
+</style>
+{% endblock %}
