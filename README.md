@@ -22,11 +22,14 @@ Proyecto web desarrollado en Django con microservicios basados en FastAPI para a
 ### ✅ Opción rápida (recomendada)
 
 Las imágenes de todos los servicios ya están disponibles en **Docker Hub**, así que con un solo comando puedes levantar todo el sistema:
-Tan solo necesitarías descargar el archivo docker-compose.yaml del repositorio y realizar lo siguiente:
+Tan solo necesitarías descargar el archivo docker-compose.yaml del repositorio (o bien clonar todo el repositorio) y realizar lo siguiente:
+
+🔗 [`docker-compose.yaml`](https://raw.githubusercontent.com/paulamirgaya/pixelpixies-faseII/main/docker-compose.yaml)
+
+Guárdalo en una carpeta vacía y luego ejecuta:
 
 ```bash
 docker compose up
-```
 
 Eso te arrancará:
 
@@ -59,6 +62,12 @@ Puedes usar estos usuarios directamente al iniciar sesión en la web.
 ### 🛠️ Opción avanzada: construir las imágenes tú mismo
 
 Si quieres construir las imágenes localmente, haz lo siguiente:
+
+Clona el repositorio:
+
+```bash
+git clone https://github.com/paulamirgaya/pixelpixies-faseII.git
+cd pixelpixies-faseII
 
 1. **Edita el `docker-compose.yaml`** y:
    - ❌ Comenta las líneas que dicen `image:`
