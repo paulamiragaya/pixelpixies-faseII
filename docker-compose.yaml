@@ -1,0 +1,29 @@
+services:
+  django:
+    # build: ./GreenLakeWeb
+    image: paulamiragaya/greenlake-django:latest
+    ports:
+      - "8000:8000"
+    depends_on:
+      - snt-kwv1
+      - ir-srv2
+    # volumes:
+    #   - ./GreenLakeWeb:/app
+    environment:
+      - DEBUG=True
+
+  snt-kwv1:
+    # build: ./app-snt-kwv1
+    image: paulamiragaya/snt-kwv1:latest
+    ports:
+      - "8001:8000"
+    # volumes:
+    #   - ./app-snt-kwv1:/app
+
+  ir-srv2:
+    # build: ./app-ir-srv2
+    image: paulamiragaya/ir-srv2:latest
+    ports:
+      - "8002:8000"
+    # volumes:
+    #   - ./app-ir-srv2:/app
