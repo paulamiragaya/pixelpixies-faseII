@@ -24,7 +24,7 @@ Proyecto web desarrollado en Django con microservicios basados en FastAPI para a
 Las imágenes de todos los servicios ya están disponibles en **Docker Hub**, así que con un solo comando puedes levantar todo el sistema:
 Tan solo necesitarías descargar el archivo docker-compose.yaml del repositorio (o bien clonar todo el repositorio) y realizar lo siguiente:
 
-🔗 [`docker-compose.yaml`](https://raw.githubusercontent.com/paulamirgaya/pixelpixies-faseII/main/docker-compose.yaml)
+🔗 [`docker-compose.yaml`](https://raw.githubusercontent.com/paulamiragaya/pixelpixies-faseII/refs/heads/main/docker-compose.yaml)
 Guárdalo en una carpeta vacía y luego ejecuta:
 
 ```bash
