@@ -1,0 +1,12 @@
+fastapi 
+uvicorn 
+transformers 
+spacy 
+huggingface_hub 
+requests
+torch 
+torchvision 
+torchaudio 
+tensorflow 
+tf-keras 
+sentencepiece
